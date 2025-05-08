@@ -27,6 +27,14 @@ saat = pygame.time.Clock()
 font = pygame.font.SysFont(None, 35)
 font_buyuk = pygame.font.SysFont(None, 60)
 
+# Bonus yemler için başlangıç değerleri
+bonus_yem_ekstra_x = round(random.randrange(0, genislik - yilan_parca_genisligi) / yilan_parca_genisligi) * yilan_parca_genisligi
+bonus_yem_ekstra_y = round(random.randrange(0, yukseklik - yilan_parca_yukseligi) / yilan_parca_yukseligi) * yilan_parca_yukseligi
+
+bonus_yem_eksi_x = round(random.randrange(0, genislik - yilan_parca_genisligi) / yilan_parca_genisligi) * yilan_parca_genisligi
+bonus_yem_eksi_y = round(random.randrange(0, yukseklik - yilan_parca_yukseligi) / yilan_parca_yukseligi) * yilan_parca_yukseligi
+
+
 def skoru_yaz(sk):
     deger = font.render("Skor: " + str(sk), True, beyaz)
     skor_x = genislik // 2 - deger.get_width() // 2
@@ -87,6 +95,8 @@ def baslangic_ekrani():
 
 def oyun():
     global yilan_hizi
+    global bonus_yem_ekstra_x, bonus_yem_ekstra_y, bonus_yem_eksi_x, bonus_yem_eksi_y  # Global değişkenleri belirtin
+
     x = genislik // 2
     y = yukseklik // 2
     x_degisim = yilan_parca_genisligi
@@ -113,7 +123,7 @@ def oyun():
                 elif etkinlik.key == pygame.K_RIGHT and x_degisim == 0:
                     x_degisim = yilan_parca_genisligi
                     y_degisim = 0
-                elif etkinlik.key == pygame.K_UP and y_degisim== 0:
+                elif etkinlik.key == pygame.K_UP and y_degisim == 0:
                     y_degisim = -yilan_parca_genisligi
                     x_degisim = 0
                 elif etkinlik.key == pygame.K_DOWN and y_degisim == 0:
@@ -140,6 +150,10 @@ def oyun():
         ekran.fill(siyah)
         pygame.draw.rect(ekran, mavi, [yem_x, yem_y, yem_boyutu, yem_boyutu])
 
+        # Bonus yemleri çiz
+        pygame.draw.rect(ekran, koyu_yesil, [bonus_yem_ekstra_x, bonus_yem_ekstra_y, yilan_parca_genisligi, yilan_parca_yukseligi])
+        pygame.draw.rect(ekran, kirmizi, [bonus_yem_eksi_x, bonus_yem_eksi_y, yilan_parca_genisligi, yilan_parca_yukseligi])
+
         yeni_parca = [x, y]
         yilan_parcalar.append(yeni_parca)
 
@@ -153,10 +167,22 @@ def oyun():
         yilani_ciz(yilan_parcalar)
         skoru_yaz(yilan_uzunlugu - 3)
 
+        # Yem yeme kontrolü
         if x == yem_x and y == yem_y:
             yilan_uzunlugu += 1
             yem_x = round(random.randrange(0, genislik - yem_boyutu) / yem_boyutu) * yem_boyutu
             yem_y = round(random.randrange(0, yukseklik - yem_boyutu) / yilan_parca_yukseligi) * yilan_parca_yukseligi
+
+        # Bonus yem yeme kontrolü
+        if x == bonus_yem_ekstra_x and y == bonus_yem_ekstra_y:
+            yilan_uzunlugu += 2  # Ekstra puan
+            bonus_yem_ekstra_x = round(random.randrange(0, genislik - yilan_parca_genisligi) / yilan_parca_genisligi) * yilan_parca_genisligi
+            bonus_yem_ekstra_y = round(random.randrange(0, yukseklik - yilan_parca_yukseligi) / yilan_parca_yukseligi) * yilan_parca_yukseligi
+
+        if x == bonus_yem_eksi_x and y == bonus_yem_eksi_y:
+            yilan_uzunlugu = max(3, yilan_uzunlugu - 2)  # Puan azalt, minimum 3
+            bonus_yem_eksi_x = round(random.randrange(0, genislik - yilan_parca_genisligi) / yilan_parca_genisligi) * yilan_parca_genisligi
+            bonus_yem_eksi_y = round(random.randrange(0, yukseklik - yilan_parca_yukseligi) / yilan_parca_yukseligi) * yilan_parca_yukseligi
 
         pygame.display.update()
         saat.tick(yilan_hizi)
