@@ -1,7 +1,10 @@
 import pygame
 import random
+import os
 
 pygame.init()
+
+SKOR_DOSYASI = "en_yuksek_skor.txt"
 
 # Renkler
 siyah = (0, 0, 0)
@@ -35,10 +38,23 @@ bonus_yem_sari_y = round(random.randrange(0, yukseklik - yilan_parca_yukseligi) 
 bonus_yem_mavi_x = round(random.randrange(0, genislik - yilan_parca_genisligi) / yilan_parca_genisligi) * yilan_parca_genisligi
 bonus_yem_mavi_y = round(random.randrange(0, yukseklik - yilan_parca_yukseligi) / yilan_parca_yukseligi) * yilan_parca_yukseligi
 
-def skoru_yaz(sk):
-    deger = font.render("Skor: " + str(sk), True, beyaz)
+def skoru_yaz(sk, en_yuksek_skor):
+    deger = font.render(f"Skor: {sk}  |  En Yüksek Skor: {en_yuksek_skor}", True, beyaz)
     skor_x = genislik // 2 - deger.get_width() // 2
     ekran.blit(deger, [skor_x, 10])
+
+def en_yuksek_skoru_oku():
+    if not os.path.exists(SKOR_DOSYASI):
+        return 0
+    with open(SKOR_DOSYASI, "r") as f:
+        try:
+            return int(f.read())
+        except:
+            return 0
+
+def en_yuksek_skoru_yaz(skor):
+    with open(SKOR_DOSYASI, "w") as f:
+        f.write(str(skor))
 
 def yilani_ciz(parcalar):
     for parca in parcalar:
@@ -108,6 +124,7 @@ def oyun():
     yem_boyutu = yilan_parca_genisligi
     yem_x = round(random.randrange(0, genislik - yem_boyutu) / yem_boyutu) * yem_boyutu
     yem_y = round(random.randrange(0, yukseklik - yem_boyutu) / yilan_parca_yukseligi) * yilan_parca_yukseligi
+    en_yuksek_skor = en_yuksek_skoru_oku()
 
     oyun_bitti = False
 
@@ -165,7 +182,7 @@ def oyun():
                 oyun_bitti = True
 
         yilani_ciz(yilan_parcalar)
-        skoru_yaz(yilan_uzunlugu - 3)
+        skoru_yaz(yilan_uzunlugu - 3, en_yuksek_skor)
 
        # Yem yeme kontrolü
         if x == yem_x and y == yem_y:
@@ -190,6 +207,9 @@ def oyun():
 
         pygame.display.update()
         saat.tick(yilan_hizi)
+        # Oyun bittiğinde en yüksek skoru güncelle
+        if yilan_uzunlugu - 3 > en_yuksek_skor:
+            en_yuksek_skoru_yaz(yilan_uzunlugu - 3)
 
     # Oyun bitti ekranı
     while True:
