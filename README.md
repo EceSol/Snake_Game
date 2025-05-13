@@ -1,6 +1,5 @@
 # Snake Game
 
-## Açıklama
 Bu proje, klasik yılan oyununu Python ve Pygame kullanarak geliştirilmiş bir versiyonudur.
 
 
