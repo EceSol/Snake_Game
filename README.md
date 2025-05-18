@@ -28,4 +28,4 @@ Bu proje, klasik yılan oyununu Python ve Pygame kullanarak geliştirilmiş bir 
 ## Kontroller
 
 - **Yön Tuşları:** Yılanı hareket ettirir.
-- **Boşluk (Space):** Yılanı geçici olarak hızlandırır.
+- **Boşluk (Space):** Yılanı geçici olarak hızlandırır..
